@@ -3,161 +3,228 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CareHalo — Building an AI-powered care enquiry system</title>
-  <meta name="description" content="A personal build story exploring conversational AI, Bubble, ElevenLabs, SendGrid and Twilio for after-hours care enquiry capture and escalation." />
-  <meta name="theme-color" content="#071b34" />
+  <title>CareHalo — Building an AI-powered care enquiry and escalation system</title>
+  <meta name="description" content="CareHalo is a case study exploring how ElevenLabs, Bubble, SendGrid and Twilio can support after-hours care enquiry capture and escalation." />
+  <meta name="theme-color" content="#081d34" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --navy:#071b34;
-      --navy-2:#0d2a4d;
-      --ink:#10243e;
-      --muted:#5d6f82;
-      --teal:#16a7a4;
-      --cyan:#31c6d4;
-      --blue:#286be8;
-      --red:#d94c5c;
-      --amber:#e6a23c;
-      --green:#1e9d72;
-      --paper:#f7fafc;
-      --white:#ffffff;
-      --line:#dce7ef;
-      --soft:#eef6f8;
-      --soft-blue:#eef4ff;
-      --shadow:0 22px 70px rgba(7,27,52,.12);
-      --shadow-sm:0 10px 32px rgba(7,27,52,.08);
-      --radius:24px;
-      --max:1180px;
+      --navy:#081d34;
+      --navy-2:#102b47;
+      --teal:#17a8a5;
+      --teal-2:#35c7cf;
+      --ink:#16314b;
+      --text:#466174;
+      --muted:#74889a;
+      --bg:#f5f8fb;
+      --bg-2:#eef4f7;
+      --white:#fff;
+      --line:#d8e4ec;
+      --line-2:#e7eef3;
+      --gold:#f2cc60;
+      --shadow:0 22px 70px rgba(8,29,52,.09);
+      --shadow-sm:0 14px 34px rgba(8,29,52,.06);
+      --radius:26px;
+      --max:1240px;
+      --font:"Century Gothic","Avenir Next",Manrope,Montserrat,Arial,sans-serif;
     }
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.65}
+    html{scroll-behavior:smooth;scroll-padding-top:90px}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.72}
     img{max-width:100%;display:block}
-    a{color:inherit}
+    a{text-decoration:none;color:inherit}
     .wrap{width:min(var(--max),calc(100% - 40px));margin:auto}
-    .nav{position:sticky;top:0;z-index:40;background:rgba(247,250,252,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(220,231,239,.8)}
-    .nav-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;text-decoration:none}
-    .brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--cyan));display:grid;place-items:center;color:white;font-weight:900;box-shadow:0 8px 20px rgba(22,167,164,.25)}
-    .brand span{color:var(--teal)}
-    .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;color:#43566a}
-    .nav-links a{text-decoration:none;padding:8px 2px;border-bottom:2px solid transparent}
-    .nav-links a:hover,.nav-links a.active{color:var(--navy);border-bottom-color:var(--teal)}
-    .nav-cta{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 14px!important;font-weight:700;color:var(--navy)!important}
-    @media(max-width:900px){.nav-links a:not(.nav-cta){display:none}}
+    .nav{position:sticky;top:0;z-index:50;background:rgba(245,248,251,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(216,228,236,.85)}
+    .nav-inner{height:78px;display:flex;align-items:center;justify-content:space-between;gap:22px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.03em}
+    .brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--teal),var(--teal-2));color:#fff;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 16px 34px rgba(23,168,165,.24)}
+    .brand-text{font-size:30px;line-height:1}
+    .brand-text .halo{color:var(--teal)}
+    .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;color:#5d7182}
+    .nav-links a{padding:9px 4px;border-bottom:2px solid transparent}
+    .nav-links a:hover,.nav-links a.active{border-bottom-color:var(--teal);color:var(--navy)}
+    .nav-cta{padding:12px 16px;border:1px solid var(--line);background:#fff;border-radius:999px;font-weight:800;color:var(--navy)}
+    @media(max-width:980px){.nav-links a:not(.nav-cta){display:none}.brand-text{font-size:26px}}
 
-    .hero{position:relative;overflow:hidden;padding:88px 0 68px;background:
-      radial-gradient(circle at 88% 12%,rgba(49,198,212,.22),transparent 28%),
-      radial-gradient(circle at 12% 30%,rgba(40,107,232,.12),transparent 24%),
-      linear-gradient(180deg,#fff 0%,#f7fbfd 100%)}
-    .hero:after{content:"";position:absolute;width:520px;height:520px;border:1px solid rgba(22,167,164,.12);border-radius:50%;right:-270px;top:-260px;box-shadow:0 0 0 60px rgba(22,167,164,.025),0 0 0 120px rgba(40,107,232,.018)}
-    .hero-grid{display:grid;grid-template-columns:1.03fr .97fr;gap:58px;align-items:center;position:relative;z-index:1}
-    @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.hero{padding-top:60px}}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #cce6e8;border-radius:999px;background:#f5ffff;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#177f80}
-    .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 5px rgba(22,167,164,.12)}
-    h1{font-size:clamp(54px,8vw,96px);line-height:.96;letter-spacing:-.06em;margin:22px 0 18px;color:var(--navy)}
+    .hero{position:relative;overflow:hidden;padding:72px 0 44px;background:
+      radial-gradient(circle at 88% 16%,rgba(53,199,207,.18),transparent 22%),
+      radial-gradient(circle at 12% 14%,rgba(24,108,227,.08),transparent 20%),
+      linear-gradient(180deg,#fbfdff 0%,#f5f9fc 100%);
+    }
+    .hero:before{content:"";position:absolute;right:-140px;top:-120px;width:480px;height:480px;border-radius:50%;box-shadow:0 0 0 1px rgba(23,168,165,.08),0 0 0 70px rgba(23,168,165,.03),0 0 0 140px rgba(23,168,165,.015)}
+    .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:42px;align-items:center;position:relative;z-index:1}
+    @media(max-width:980px){.hero-grid{grid-template-columns:1fr}}
+    .eyebrow{display:inline-flex;gap:9px;align-items:center;padding:8px 14px;border:1px solid #cfe4e8;border-radius:999px;background:#fbffff;color:#157a7d;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}
+    .eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 6px rgba(23,168,165,.11)}
+    h1{font-size:clamp(64px,8vw,106px);line-height:.92;letter-spacing:-.065em;margin:22px 0 12px;color:var(--navy)}
     h1 .halo{color:var(--teal)}
-    .hero-kicker{font-size:clamp(22px,3vw,34px);font-weight:750;line-height:1.16;letter-spacing:-.025em;color:#213a55;max-width:760px;margin:0 0 18px}
-    .hero-copy{font-size:18px;color:var(--muted);max-width:660px;margin:0}
-    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
-    .btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;border-radius:13px;padding:13px 18px;font-weight:800;font-size:14px;border:1px solid transparent;transition:.2s ease}
-    .btn-primary{background:var(--navy);color:white;box-shadow:0 12px 28px rgba(7,27,52,.18)}
-    .btn-primary:hover{transform:translateY(-2px)}
-    .btn-secondary{background:white;border-color:var(--line);color:var(--navy)}
-    .hero-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:24px;color:#687b8d;font-size:13px}
-    .hero-meta span{display:flex;align-items:center;gap:7px}
-    .hero-card{background:white;border:1px solid #dfeaf0;border-radius:28px;padding:18px;box-shadow:var(--shadow);transform:rotate(1deg)}
-    .hero-card-inner{border-radius:20px;background:linear-gradient(150deg,#071b34,#0a3156 62%,#087e84);padding:22px;color:white;overflow:hidden;position:relative}
-    .hero-card-inner:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(49,198,212,.33),transparent 68%);right:-70px;top:-90px}
-    .mini-brand{display:flex;align-items:center;gap:12px;position:relative;z-index:1}.mini-brand img{width:56px;height:56px;object-fit:contain;background:white;border-radius:14px;padding:5px}.mini-brand strong{font-size:24px}.mini-brand small{display:block;color:#a9e9ea}
-    .mini-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:24px;position:relative;z-index:1}
-    .mini-flow div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);border-radius:14px;padding:14px 9px;text-align:center;font-size:11px;color:#dbeff4}
-    .mini-flow b{display:block;font-size:22px;margin-bottom:3px}
-    .dashboard-peek{margin-top:18px;border-radius:14px;overflow:hidden;background:white;position:relative;z-index:1;border:1px solid rgba(255,255,255,.14)}
+    .hero-title{font-size:clamp(30px,4.2vw,60px);line-height:1.04;letter-spacing:-.045em;color:#213a57;font-weight:800;max-width:780px;margin:0 0 16px}
+    .hero-copy{font-size:18px;color:var(--text);max-width:720px;margin:0}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:14px;font-weight:800;font-size:14px;transition:.2s ease;border:1px solid transparent}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--navy);color:#fff;box-shadow:0 16px 32px rgba(8,29,52,.18)}
+    .btn-secondary{background:#fff;border-color:var(--line);color:var(--navy)}
+    .hero-notes{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px;color:#6b8093;font-size:13px}
+    .hero-notes span{display:inline-flex;align-items:center;gap:8px}
+
+    .hero-stage{display:grid;grid-template-columns:1fr;gap:16px}
+    .hero-card,.card,.soft-card,.glass{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm)}
+    .hero-card{padding:20px;position:relative;overflow:hidden}
+    .hero-card:after{content:"";position:absolute;inset:auto -100px -120px auto;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(53,199,207,.22),transparent 70%)}
+    .hero-brand-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:center;position:relative;z-index:1}
+    @media(max-width:640px){.hero-brand-grid{grid-template-columns:1fr}}
+    .logo-thought{padding:12px 6px 6px}
+    .logo-thought small{display:block;color:#8192a0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;margin-bottom:12px}
+    .concept-ring{position:relative;width:220px;height:220px;margin:auto}
+    .concept-ring .ring-a,.concept-ring .ring-b,.concept-ring .ring-c{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(23,168,165,.28)}
+    .concept-ring .ring-b{inset:18px;border-style:dashed;opacity:.8}
+    .concept-ring .ring-c{inset:48px;border:0;background:radial-gradient(circle at 50% 42%,rgba(23,168,165,.16),rgba(8,29,52,.04));display:grid;place-items:center}
+    .concept-ring .centre{width:92px;height:92px;border-radius:28px;background:linear-gradient(135deg,var(--teal),var(--teal-2));display:grid;place-items:center;color:#fff;font-weight:900;font-size:34px;box-shadow:0 18px 36px rgba(23,168,165,.24)}
+    .concept-label{position:absolute;font-size:12px;font-weight:800;color:#597082;background:#fff;border:1px solid #d8e4ec;border-radius:999px;padding:8px 11px;box-shadow:var(--shadow-sm)}
+    .label-care{left:-2px;top:26px}.label-protect{right:-2px;top:48px}.label-listen{right:0;bottom:42px}.label-escalate{left:8px;bottom:22px}
+    .brand-logic h3{font-size:34px;letter-spacing:-.04em;line-height:1.08;margin:0 0 8px;color:var(--navy)}
+    .brand-logic p{margin:0 0 14px;color:var(--text);font-size:16px}
+    .logic-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .logic-box{background:#f6fafb;border:1px solid #e2edf2;border-radius:18px;padding:14px}
+    .logic-box b{display:block;color:var(--navy);font-size:15px;margin-bottom:4px}
+    .dashboard-card{padding:14px}
+    .dashboard-card small{display:block;color:#8192a0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;margin-bottom:10px}
+    .dashboard-card img{border-radius:18px;border:1px solid #e0eaf0}
 
     main section{padding:92px 0}
-    main section:nth-child(even){background:white}
-    .section-tag{display:inline-block;color:var(--teal);font-size:12px;font-weight:850;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
-    h2{font-size:clamp(36px,5vw,58px);line-height:1.05;letter-spacing:-.045em;color:var(--navy);margin:0 0 20px}
-    h3{font-size:28px;line-height:1.15;letter-spacing:-.03em;color:var(--navy);margin:0 0 14px}
-    h4{font-size:17px;margin:0 0 8px;color:var(--navy)}
-    .lead{font-size:20px;line-height:1.65;color:#4d6175;max-width:840px;margin:0 0 32px}
-    .narrow{max-width:880px}
-    .story-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:42px;align-items:start}
-    @media(max-width:850px){.story-grid{grid-template-columns:1fr}}
-    .prose p{font-size:18px;color:#42586c;margin:0 0 20px}
-    .quote{border-left:4px solid var(--teal);padding:18px 22px;background:#effafa;border-radius:0 18px 18px 0;font-size:23px;font-weight:750;line-height:1.35;color:var(--navy);margin:30px 0}
-    .card{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-sm)}
-    .soft-card{background:linear-gradient(145deg,#f7fbfd,#eef8f8);border:1px solid #d9ecee;border-radius:var(--radius);padding:28px}
-    .icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#e8f8f7;color:var(--teal);font-size:23px;margin-bottom:16px}
-    .two-col{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-    .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-    .four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-    @media(max-width:900px){.four-col{grid-template-columns:repeat(2,1fr)}.three-col{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
-    @media(max-width:560px){.four-col{grid-template-columns:1fr}}
-    .list{margin:14px 0 0;padding:0;list-style:none}.list li{position:relative;padding:8px 0 8px 27px;color:#4a6073}.list li:before{content:"✓";position:absolute;left:0;top:8px;width:18px;height:18px;border-radius:50%;background:#dff6ee;color:#13855e;font-size:11px;display:grid;place-items:center;font-weight:900}
-    .human-ai .card{height:100%}.human-ai .human{border-top:4px solid var(--navy)}.human-ai .ai{border-top:4px solid var(--teal)}
+    main section.alt{background:#fff}
+    .section-label{display:inline-block;color:var(--teal);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px}
+    h2{font-size:clamp(38px,5vw,60px);line-height:1.02;letter-spacing:-.05em;color:var(--navy);margin:0 0 18px}
+    h3{font-size:30px;line-height:1.08;letter-spacing:-.04em;margin:0 0 14px;color:var(--navy)}
+    h4{font-size:18px;letter-spacing:-.02em;margin:0 0 8px;color:var(--navy)}
+    .lead{font-size:20px;color:#4b6478;max-width:920px;margin:0 0 26px}
+    .prose p{font-size:18px;color:var(--text);margin:0 0 18px}
+    .story-grid{display:grid;grid-template-columns:1.03fr .97fr;gap:28px}
+    @media(max-width:920px){.story-grid{grid-template-columns:1fr}}
+    .quote{border-left:4px solid var(--teal);padding:16px 20px;background:#eef8f9;border-radius:0 18px 18px 0;font-size:24px;line-height:1.4;font-weight:800;color:var(--navy);margin:28px 0}
+    .soft-card{padding:26px;background:linear-gradient(145deg,#f7fbfd,#eef6f8)}
+    .soft-card p{font-size:16px;color:var(--text);margin:0 0 12px}
+    .list{list-style:none;margin:0;padding:0}.list li{position:relative;padding:8px 0 8px 28px;color:#50687d}.list li:before{content:"✓";position:absolute;left:0;top:8px;width:18px;height:18px;border-radius:50%;background:#dcf4ed;color:#118f63;font-size:11px;display:grid;place-items:center;font-weight:900}
 
-    .figure{margin:36px 0 0;background:white;border:1px solid var(--line);border-radius:26px;padding:13px;box-shadow:var(--shadow-sm)}
-    .figure img{width:100%;border-radius:18px;cursor:zoom-in}
-    figcaption{font-size:13px;color:#738596;padding:11px 8px 3px}
-    .image-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}.image-grid .figure{margin:0}.image-grid img{height:320px;object-fit:contain;background:#fbfcfd}
-    @media(max-width:900px){.image-grid{grid-template-columns:1fr}.image-grid img{height:auto}}
+    .flow-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;align-items:stretch;margin-top:26px}
+    .flow-step{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px;position:relative;min-height:184px;box-shadow:var(--shadow-sm)}
+    .flow-step .num{width:34px;height:34px;border-radius:12px;background:#eef5f7;color:var(--navy);display:grid;place-items:center;font-size:13px;font-weight:900;margin-bottom:14px}
+    .flow-step .ico{font-size:28px;margin-bottom:10px}
+    .flow-step p{font-size:14px;color:#5d7182;margin:8px 0 0}
+    .flow-step:after{content:"→";position:absolute;right:-16px;top:50%;transform:translateY(-50%);font-size:26px;color:#9eb0bf;font-weight:700}
+    .flow-step:last-child:after{display:none}
+    @media(max-width:1020px){.flow-grid{grid-template-columns:repeat(2,1fr)}.flow-step:after{display:none}}
+    @media(max-width:560px){.flow-grid{grid-template-columns:1fr}}
 
-    .stack{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-top:28px}
-    @media(max-width:900px){.stack{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:520px){.stack{grid-template-columns:1fr}}
-    .stack-card{background:white;border:1px solid var(--line);border-radius:19px;padding:20px;min-height:165px;position:relative;overflow:hidden}
-    .stack-card:after{content:"";position:absolute;width:80px;height:80px;border-radius:50%;background:rgba(22,167,164,.07);right:-25px;top:-25px}
-    .stack-logo{font-weight:900;font-size:19px;color:var(--navy);margin-bottom:8px}.stack-card p{font-size:14px;color:#687b8e;margin:0}
-    .badge{display:inline-flex;align-items:center;border:1px solid #d6e5ea;background:#f8fbfc;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:750;color:#53697b;margin:4px 5px 4px 0}
+    .architecture{margin-top:24px;background:linear-gradient(180deg,#0a2038,#0f2d4e);border-radius:32px;padding:26px;border:1px solid rgba(255,255,255,.07);box-shadow:var(--shadow);color:#fff;overflow:hidden;position:relative}
+    .architecture:before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-160px;top:-180px;background:radial-gradient(circle,rgba(53,199,207,.24),transparent 70%)}
+    .arch-top{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px;position:relative;z-index:1}
+    .arch-top p{margin:0;color:#c4d7e4;max-width:760px}
+    .arch-grid{display:grid;grid-template-columns:1.1fr .18fr 1.1fr .18fr .8fr;gap:12px;align-items:stretch;position:relative;z-index:1}
+    .arch-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:20px}
+    .arch-card h4{color:#fff;font-size:20px;margin-bottom:8px}
+    .arch-card p{font-size:14px;color:#c8d9e4;margin:0}
+    .arch-arrow{display:grid;place-items:center;font-size:30px;color:#7edce1}
+    .arch-mini{display:grid;gap:10px}
+    .tag{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:800;background:rgba(53,199,207,.14);color:#b7fbff;border:1px solid rgba(53,199,207,.22);margin:3px 6px 0 0}
+    @media(max-width:980px){.arch-grid{grid-template-columns:1fr}.arch-arrow{transform:rotate(90deg)}}
 
-    .phase-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}.phase-num{width:48px;height:48px;border-radius:15px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:900}
-    .decision{display:grid;grid-template-columns:1fr 70px 1fr;align-items:stretch;gap:12px;margin:30px 0}.decision-arrow{display:grid;place-items:center;color:var(--teal);font-size:28px;font-weight:900}.decision .card:first-child{border-top:4px solid #8899a8}.decision .card:last-child{border-top:4px solid var(--teal)}
-    @media(max-width:750px){.decision{grid-template-columns:1fr}.decision-arrow{transform:rotate(90deg);height:34px}}
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}.chip{background:#eef8f8;border:1px solid #d3eceb;color:#147979;border-radius:999px;padding:8px 11px;font-size:13px;font-weight:750}
-    .prompt{background:#06172d;color:#dbe9f2;border-radius:22px;padding:24px;box-shadow:var(--shadow-sm);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;line-height:1.75;overflow:auto}.prompt .comment{color:#6fa5a7}.prompt .key{color:#59d7cf}.prompt .warn{color:#ffbf69}
-    .loop{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:26px}.loop div{background:white;border:1px solid var(--line);border-radius:16px;text-align:center;padding:18px 10px;font-weight:800;color:#335067;position:relative}.loop div:not(:last-child):after{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);z-index:3;color:var(--teal);font-size:18px}.loop b{display:block;font-size:22px;color:var(--teal)}
-    @media(max-width:800px){.loop{grid-template-columns:1fr}.loop div:not(:last-child):after{content:"↓";right:50%;top:auto;bottom:-18px;transform:translateX(50%)}}
+    .phase{display:grid;grid-template-columns:1.02fr .98fr;gap:26px;align-items:start;margin-top:8px}
+    @media(max-width:950px){.phase{grid-template-columns:1fr}}
+    .phase .card,.phase .soft-card{padding:24px}
+    .media-card{padding:18px}.media-card img{border-radius:18px;border:1px solid #e0e8ee;background:#fbfdff}
+    .media-card figcaption{font-size:13px;color:#738799;padding-top:10px}
+    .chip{display:inline-flex;align-items:center;padding:7px 10px;background:#f2f7fa;border:1px solid #dde7ed;border-radius:999px;font-size:12px;font-weight:800;color:#5b7083;margin:0 7px 8px 0}
+    .browser{border:1px solid var(--line);border-radius:22px;overflow:hidden;background:#fff;box-shadow:var(--shadow-sm)}
+    .browser-top{height:40px;background:#f4f7f9;border-bottom:1px solid #e4edf2;display:flex;gap:7px;align-items:center;padding:0 14px}.browser-top span{width:9px;height:9px;border-radius:50%;background:#d8e0e6}
+    .browser-body{padding:22px}
+    .prompt-box,.kb-box{padding:16px;border-radius:18px;background:#f8fbfc;border:1px solid #e2edf2;margin-top:14px}
+    .prompt-box p,.kb-box p{font-size:15px;margin:0;color:#5c7284}
+    .prompt-points,.kb-grid{display:grid;gap:10px;margin-top:14px}
+    .prompt-points{grid-template-columns:1fr 1fr}
+    .kb-grid{grid-template-columns:1fr 1fr}
+    .mini-card{padding:14px;border-radius:14px;background:#fff;border:1px solid #e4edf2;font-size:14px;color:#50687d;font-weight:700}
+    @media(max-width:640px){.prompt-points,.kb-grid{grid-template-columns:1fr}}
 
-    .browser-frame{border:1px solid #d6e1e8;border-radius:20px;overflow:hidden;background:white;box-shadow:var(--shadow-sm)}
-    .browser-bar{height:40px;background:#f4f7f9;border-bottom:1px solid #e1e9ee;display:flex;align-items:center;gap:7px;padding:0 13px}.browser-dot{width:9px;height:9px;border-radius:50%;background:#d7e0e5}.browser-body{padding:24px}.kb-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}.kb-item{padding:14px;border-radius:13px;background:#f6fafb;border:1px solid #e4edf1;font-size:14px;color:#4f6578}
+    .llm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+    @media(max-width:900px){.llm-grid{grid-template-columns:1fr}}
 
-    .capture-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}.capture{background:#f5fafb;border:1px solid #e1ecef;border-radius:14px;padding:15px;font-size:14px;font-weight:700;color:#3b5367}
-    @media(max-width:750px){.capture-grid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.capture-grid{grid-template-columns:1fr}}
+    .bubble-screens{display:grid;grid-template-columns:1.06fr .94fr;gap:16px;margin-top:12px}
+    @media(max-width:900px){.bubble-screens{grid-template-columns:1fr}}
+    .capture-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+    .capture{background:#f6fafb;border:1px solid #e1ecef;border-radius:14px;padding:14px;font-size:14px;font-weight:800;color:#475f73}
+    @media(max-width:720px){.capture-grid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.capture-grid{grid-template-columns:1fr}}
 
-    .branch{display:grid;grid-template-columns:1fr 70px 1fr 1fr;gap:14px;align-items:center;margin:30px 0}.branch .bubble{background:#eef4ff;border:1px solid #ccdafa}.branch .mail{background:#f5f2ff;border:1px solid #ddd5fa}.branch .phone{background:#fff3f4;border:1px solid #f4d2d8}.branch .route{font-size:30px;color:var(--blue);text-align:center}.branch .card{box-shadow:none;height:100%}
-    @media(max-width:850px){.branch{grid-template-columns:1fr}.branch .route{transform:rotate(90deg)}}
+    .summary-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+    .summary-box{background:#f7fbfd;border:1px solid #e0eaef;border-radius:18px;padding:18px}
+    .summary-box p{font-size:15px;margin:0;color:#556d80}
+    @media(max-width:760px){.summary-strip{grid-template-columns:1fr}}
 
-    .scenario{background:linear-gradient(135deg,#071b34,#0a365b 70%,#0a7c82);border-radius:30px;padding:28px;color:white;box-shadow:var(--shadow)}
-    .scenario h3{color:white}.scenario-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:22px}.scenario-step{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:18px;padding:18px 12px;min-height:165px}.scenario-step .s-icon{font-size:31px;margin-bottom:10px}.scenario-step strong{display:block;font-size:14px}.scenario-step p{font-size:12px;color:#cce1ec;margin:7px 0 0}.scenario-footer{margin-top:16px;padding:13px 16px;border-radius:13px;background:rgba(49,198,212,.12);border:1px solid rgba(49,198,212,.25);font-weight:700;text-align:center}
-    @media(max-width:850px){.scenario-steps{grid-template-columns:1fr 1fr}}@media(max-width:520px){.scenario-steps{grid-template-columns:1fr}}
+    .scenario{background:linear-gradient(135deg,#071e36,#0d3558 68%,#0c7c83);padding:28px;border-radius:30px;color:#fff;box-shadow:var(--shadow);margin-top:28px;position:relative;overflow:hidden}
+    .scenario:after{content:"";position:absolute;inset:auto -120px -120px auto;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(53,199,207,.25),transparent 70%)}
+    .scenario h3{color:#fff}.scenario p{color:#d1e1ea}
+    .scenario-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px;position:relative;z-index:1}
+    .scenario-step{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:18px;padding:16px;min-height:160px}
+    .scenario-step .ico{font-size:28px;margin-bottom:10px}.scenario-step strong{display:block;font-size:14px}.scenario-step p{font-size:12px;margin:8px 0 0}
+    @media(max-width:980px){.scenario-grid{grid-template-columns:1fr 1fr}}@media(max-width:540px){.scenario-grid{grid-template-columns:1fr}}
 
-    .privacy-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:28px 0}.privacy-card{background:white;border:1px solid var(--line);border-radius:20px;padding:21px}.privacy-card .tool{font-weight:900;color:var(--navy);margin-bottom:9px}.privacy-card p{font-size:14px;color:#5a6e80;margin:0}.privacy-card small{display:block;margin-top:12px;color:#8292a0}.privacy-note{background:#fff9ec;border:1px solid #f0dfae;border-radius:18px;padding:20px;color:#6f5b24}.privacy-note strong{color:#54410f}
-    @media(max-width:900px){.privacy-flow{grid-template-columns:1fr 1fr}}@media(max-width:520px){.privacy-flow{grid-template-columns:1fr}}
+    .privacy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+    .privacy-card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow-sm)}
+    .privacy-card .tool{font-weight:900;color:var(--navy);font-size:19px;margin-bottom:10px}
+    .privacy-card p{font-size:14px;color:#5b7183;margin:0}
+    .privacy-card small{display:block;margin-top:12px;color:#7b8d9a}
+    .privacy-note{margin-top:18px;background:#fff8e9;border:1px solid #f0dfae;border-radius:20px;padding:18px;color:#6c5923}
+    @media(max-width:980px){.privacy-grid{grid-template-columns:1fr 1fr}}@media(max-width:540px){.privacy-grid{grid-template-columns:1fr}}
 
-    .metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0}.metric{background:#06172d;color:white;border-radius:20px;padding:21px}.metric small{display:block;color:#99b0c1;font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:800}.metric b{display:block;font-size:30px;margin-top:4px}.metric span{color:#b9ceda;font-size:12px}
-    @media(max-width:800px){.metric-row{grid-template-columns:1fr 1fr}}@media(max-width:460px){.metric-row{grid-template-columns:1fr}}
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;background:white;box-shadow:var(--shadow-sm)}table{border-collapse:collapse;width:100%;min-width:760px}th,td{text-align:left;padding:15px 16px;border-bottom:1px solid #e8eef2;font-size:14px}th{background:#f3f8fa;color:#3d5468;font-size:12px;text-transform:uppercase;letter-spacing:.06em}td:last-child,th:last-child{text-align:right}tr:last-child td{border-bottom:0}.total-row td{font-weight:900;background:#f4fbfa;color:var(--navy)}
-    .cost-callout{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}.cost-big{background:linear-gradient(135deg,#071b34,#0b3e64);color:white;border-radius:24px;padding:28px}.cost-big b{font-size:48px;line-height:1;display:block;margin:8px 0}.cost-big small{color:#a6c2d2}.cost-big.alt{background:linear-gradient(135deg,#0a6c6d,#13a6a3)}
-    @media(max-width:700px){.cost-callout{grid-template-columns:1fr}}
-    .fine{font-size:12px;color:#7b8c99;margin-top:14px}
+    .metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+    .metric{background:#0a2038;color:#fff;border-radius:22px;padding:20px}
+    .metric small{display:block;font-size:12px;color:#9eb6c6;text-transform:uppercase;letter-spacing:.1em;font-weight:800}.metric b{display:block;font-size:30px;margin-top:5px}.metric span{display:block;font-size:12px;color:#bdd0dc;margin-top:6px}
+    @media(max-width:850px){.metric-row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.metric-row{grid-template-columns:1fr}}
 
-    .lessons{counter-reset:learn;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.lesson{counter-increment:learn;background:white;border:1px solid var(--line);border-radius:18px;padding:22px;position:relative;padding-left:70px}.lesson:before{content:counter(learn,decimal-leading-zero);position:absolute;left:20px;top:19px;font-size:18px;font-weight:900;color:var(--teal)}.lesson h4{margin-bottom:5px}.lesson p{font-size:14px;color:#617486;margin:0}
-    @media(max-width:750px){.lessons{grid-template-columns:1fr}}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow-sm)}
+    table{width:100%;border-collapse:collapse;min-width:780px}
+    th,td{padding:15px 16px;border-bottom:1px solid #e7edf2;text-align:left;font-size:14px}
+    th{font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:#f3f8fa;color:#466073}
+    td:last-child,th:last-child{text-align:right}
+    tr:last-child td{border-bottom:0}
+    .total-row td{font-weight:900;background:#f5fbfa;color:var(--navy)}
+    .cost-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+    .cost-card{padding:26px;border-radius:26px;color:#fff;box-shadow:var(--shadow)}
+    .cost-card.dark{background:linear-gradient(135deg,#081d34,#0d395b)}
+    .cost-card.teal{background:linear-gradient(135deg,#0d7c80,#17a8a5)}
+    .cost-card small{display:block;color:#c7dbe7;font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
+    .cost-card b{display:block;font-size:54px;line-height:1;margin:8px 0}
+    .cost-card.teal small{color:#dbffff}
+    @media(max-width:760px){.cost-cards{grid-template-columns:1fr}}
 
-    .cta{background:linear-gradient(135deg,#071b34,#0a365b 62%,#0b7e82);border-radius:34px;padding:48px;color:white;position:relative;overflow:hidden}.cta:after{content:"";position:absolute;width:360px;height:360px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-170px;top:-180px}.cta h2{color:white;max-width:760px}.cta p{color:#c6dbe6;max-width:720px;font-size:18px}.cta .btn-secondary{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.24);color:white}
-    .sources{font-size:13px;color:#66798b}.sources a{color:#176d99}
-    footer{padding:38px 0 56px;color:#708393;font-size:13px}.footer-grid{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.disclaimer{max-width:800px}
+    .lessons{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;counter-reset:item}
+    .lesson{counter-increment:item;background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px 20px 20px 70px;position:relative;box-shadow:var(--shadow-sm)}
+    .lesson:before{content:counter(item,decimal-leading-zero);position:absolute;left:20px;top:18px;font-size:18px;font-weight:900;color:var(--teal)}
+    .lesson p{font-size:14px;color:#617485;margin:0}
+    @media(max-width:850px){.lessons{grid-template-columns:1fr}}
 
-    .lightbox{position:fixed;inset:0;background:rgba(3,13,27,.9);z-index:100;display:none;align-items:center;justify-content:center;padding:30px}.lightbox.open{display:flex}.lightbox img{max-width:95vw;max-height:90vh;border-radius:14px;background:white;box-shadow:0 30px 90px rgba(0,0,0,.5)}.lightbox button{position:absolute;right:24px;top:20px;border:0;background:white;color:var(--navy);width:42px;height:42px;border-radius:50%;font-size:24px;cursor:pointer}
+    .cta{background:linear-gradient(135deg,#071d34,#0d3657 62%,#0b7e82);border-radius:34px;padding:44px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+    .cta:before{content:"";position:absolute;right:-120px;top:-140px;width:320px;height:320px;border-radius:50%;border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 60px rgba(255,255,255,.03),0 0 0 120px rgba(255,255,255,.02)}
+    .cta h2{color:#fff;max-width:800px}.cta p{max-width:720px;color:#c6dae7;font-size:18px}.cta .btn-secondary{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18);color:#fff}
+
+    footer{padding:34px 0 54px;color:#74889a;font-size:13px}.footer-grid{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+    .lightbox{position:fixed;inset:0;background:rgba(3,12,24,.88);z-index:100;display:none;align-items:center;justify-content:center;padding:24px}.lightbox.open{display:flex}.lightbox img{max-width:95vw;max-height:90vh;border-radius:16px;background:#fff;box-shadow:0 30px 90px rgba(0,0,0,.45)}.lightbox button{position:absolute;right:18px;top:18px;border:0;background:#fff;width:42px;height:42px;border-radius:50%;font-size:24px;cursor:pointer;color:#081d34}
   </style>
 </head>
 <body>
   <header class="nav">
     <div class="wrap nav-inner">
-      <a class="brand" href="#top"><div class="brand-mark">C</div>Care<span>Halo</span></a>
+      <a class="brand" href="#top" aria-label="CareHalo home">
+        <div class="brand-mark">C</div>
+        <div class="brand-text">Care<span class="halo">Halo</span></div>
+      </a>
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="#story">Story</a>
+        <a href="#design">Brand</a>
         <a href="#stack">Stack</a>
         <a href="#build">Build</a>
         <a href="#privacy">UK GDPR</a>
@@ -167,42 +234,62 @@
     </div>
   </header>
 
-  <div id="top" class="hero">
+  <section id="top" class="hero">
     <div class="wrap hero-grid">
       <div>
-        <div class="eyebrow"><span class="dot"></span> Personal build · Voice AI · No-code · Automation</div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span> Voice AI · No-code · Automation · Care enquiry workflow</div>
         <h1>Care<span class="halo">Halo</span></h1>
-        <p class="hero-kicker">Building an AI-powered care enquiry and escalation system — from a missed-call problem to a working end-to-end prototype.</p>
-        <p class="hero-copy">A build story about voice AI, prompt iteration, no-code orchestration, data privacy, cost and one important principle: AI should support people when people cannot always be there.</p>
+        <p class="hero-title">Building an AI-powered care enquiry and escalation system — from a missed-call problem to a working end-to-end prototype.</p>
+        <p class="hero-copy">A case study exploring how ElevenLabs, Bubble, SendGrid and Twilio can work together to answer after-hours calls, capture care enquiries, structure the conversation and trigger the right follow-up.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://canva.link/jgeissh9xfzk5v6" target="_blank" rel="noreferrer">▶ Watch the 3-minute demo</a>
           <a class="btn btn-secondary" href="#story">Read the build story ↓</a>
           <a class="btn btn-secondary" href="https://carehalo-ai.bubbleapps.io" target="_blank" rel="noreferrer">Open live prototype ↗</a>
         </div>
-        <div class="hero-meta">
-          <span>◉ Built independently</span><span>⌁ Fictional test data</span><span>⌂ UK use-case exploration</span>
+        <div class="hero-notes">
+          <span>◉ Fictional test data</span>
+          <span>⌁ UK use-case exploration</span>
+          <span>⌂ End-to-end prototype</span>
         </div>
       </div>
-      <div class="hero-card" aria-label="CareHalo product preview">
-        <div class="hero-card-inner">
-          <div class="mini-brand">
-            <img src="assets/carehalo-logo.png" alt="CareHalo logo" />
-            <div><strong>CareHalo</strong><small>Every call understood. Every need connected.</small></div>
+      <div class="hero-stage">
+        <div class="hero-card">
+          <div class="hero-brand-grid">
+            <div class="logo-thought">
+              <small>Brand thought process</small>
+              <div class="concept-ring">
+                <div class="ring-a"></div>
+                <div class="ring-b"></div>
+                <div class="ring-c"><div class="centre">C</div></div>
+                <div class="concept-label label-care">Care</div>
+                <div class="concept-label label-protect">Protect</div>
+                <div class="concept-label label-listen">Listen</div>
+                <div class="concept-label label-escalate">Escalate</div>
+              </div>
+            </div>
+            <div class="brand-logic">
+              <h3>A brand built around a protective support layer.</h3>
+              <p><strong>Care</strong> keeps the person and their need at the centre. <strong>Halo</strong> represents the intelligent layer that surrounds the enquiry — listening, capturing and safeguarding the moment until the human team can act.</p>
+              <div class="logic-row">
+                <div class="logic-box"><b>Care</b> Warmth, reassurance, support and follow-up.</div>
+                <div class="logic-box"><b>Halo</b> A surrounding layer that protects, organises and escalates.</div>
+              </div>
+            </div>
           </div>
-          <div class="mini-flow">
-            <div><b>☎</b>Call</div><div><b>◖◗</b>AI voice</div><div><b>▤</b>Structure</div><div><b>↗</b>Escalate</div>
-          </div>
-          <div class="dashboard-peek"><img src="assets/bubble-dashboard.png" alt="CareHalo Bubble dashboard preview" /></div>
+        </div>
+        <div class="hero-card dashboard-card">
+          <small>Product preview</small>
+          <img src="assets/bubble-dashboard.png" alt="CareHalo dashboard preview" />
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <main>
     <section id="story">
       <div class="wrap story-grid">
         <div class="prose">
-          <span class="section-tag">01 · The problem</span>
+          <span class="section-label">01 · The problem</span>
           <h2>It started with a missed-call problem.</h2>
           <p>In care and other service-led businesses, the first phone call can carry a lot of weight. It might be a daughter looking for dementia care for her father, a family arranging respite care, or someone calling after a hospital discharge.</p>
           <p>Those calls do not conveniently happen only during working hours. They arrive in the evening, at weekends, on bank holidays, while the receptionist is away from the desk, or when the team is already helping somebody else.</p>
@@ -210,8 +297,8 @@
           <p>That question became the starting point for CareHalo.</p>
         </div>
         <aside class="soft-card">
-          <div class="icon">☎</div>
-          <h3>The gap I wanted to explore</h3>
+          <h3>The gap worth solving</h3>
+          <p>I wanted to explore an AI-assisted layer for a moment that businesses often miss:</p>
           <ul class="list">
             <li>Calls arriving outside normal working hours</li>
             <li>Reception teams not always available</li>
@@ -223,276 +310,325 @@
       </div>
     </section>
 
-    <section>
+    <section id="design" class="alt">
       <div class="wrap">
-        <span class="section-tag">02 · Product philosophy</span>
-        <h2>AI when humans are unavailable — not instead of humans.</h2>
-        <p class="lead">The model I wanted to explore was deliberately simple: keep people at the centre during normal operations, and use AI as the safety net when nobody can answer immediately.</p>
-        <div class="two-col human-ai">
-          <div class="card human"><div class="icon">👥</div><h3>When the team is available</h3><p>Humans answer, build trust, understand nuance, make judgement calls and guide families through the next step.</p></div>
-          <div class="card ai"><div class="icon">✦</div><h3>When the team is unavailable</h3><p>AI listens, captures the enquiry, structures the information, notifies the team and escalates an urgent case if necessary.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="wrap">
-        <span class="section-tag">03 · The name</span>
+        <span class="section-label">02 · The brand idea</span>
         <h2>Why “CareHalo”?</h2>
-        <div class="two-col">
-          <div class="card"><div class="icon">♥</div><h3>Care</h3><p>The person seeking support remains at the centre. The technology exists around the care need — not the other way around.</p></div>
-          <div class="card"><div class="icon">◌</div><h3>Halo</h3><p>A halo surrounds and protects. That felt like the right metaphor for an intelligent layer that stays around the enquiry process when humans cannot always be present.</p></div>
+        <p class="lead">The name itself had to explain the product. I wanted something that felt warm, clear and protective — not overly technical, and not just another AI label.</p>
+        <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+          <div class="card" style="padding:28px;">
+            <h3>Care</h3>
+            <p>The person seeking support remains at the centre of the experience. The technology exists around the care need — not the other way around.</p>
+            <h3 style="margin-top:24px">Halo</h3>
+            <p>A halo surrounds something. It protects. It watches over. It stays around the edges. That felt like the right metaphor for an intelligent layer wrapped around a sensitive enquiry journey.</p>
+          </div>
+          <div class="card" style="padding:28px;">
+            <h3>The core promise</h3>
+            <div class="flow-grid" style="grid-template-columns:repeat(4,1fr);margin-top:10px;">
+              <div class="flow-step" style="min-height:auto;padding:16px;"><div class="ico">👂</div><h4>Listen</h4><p>Understand the caller naturally.</p></div>
+              <div class="flow-step" style="min-height:auto;padding:16px;"><div class="ico">✍️</div><h4>Capture</h4><p>Collect the important details.</p></div>
+              <div class="flow-step" style="min-height:auto;padding:16px;"><div class="ico">🗂️</div><h4>Organise</h4><p>Turn speech into a structured enquiry.</p></div>
+              <div class="flow-step" style="min-height:auto;padding:16px;"><div class="ico">📞</div><h4>Escalate</h4><p>Trigger the right follow-up if urgent.</p></div>
+            </div>
+          </div>
         </div>
-        <div class="quote" style="max-width:900px">Listen → understand → capture → organise → notify → escalate.</div>
       </div>
     </section>
 
     <section>
       <div class="wrap">
-        <span class="section-tag">04 · The core system</span>
-        <h2>What CareHalo is designed to do.</h2>
-        <p class="lead">A caller speaks naturally. The system turns that conversation into a manager-ready enquiry and triggers the right follow-up based on urgency.</p>
-        <figure class="figure"><img src="assets/carehalo-flow.png" alt="Flow diagram showing caller, AI voice agent, structured enquiry, manager dashboard, email alert and urgent phone escalation" data-lightbox /><figcaption>Core CareHalo workflow: from the first call to a structured, actionable enquiry.</figcaption></figure>
-      </div>
-    </section>
-
-    <section>
-      <div class="wrap">
-        <span class="section-tag">05 · Curiosity became a build</span>
-        <h2>I wanted to understand what actually sits underneath an AI receptionist.</h2>
-        <p class="lead">I had been exploring products including Lottie, Maxxo AI and other voice-AI receptionist builds. Rather than trying to copy a finished commercial platform, I set myself a smaller, more useful challenge: build a working model and understand the stack.</p>
-        <div class="three-col">
-          <div class="soft-card"><h4>Voice</h4><p>What makes one agent sound robotic while another feels natural enough to continue speaking to?</p></div>
-          <div class="soft-card"><h4>Workflow</h4><p>Where does the conversation go after the call, and how does a manager turn it into action?</p></div>
-          <div class="soft-card"><h4>Economics</h4><p>What does the whole system cost if it handles real out-of-hours call volume?</p></div>
+        <span class="section-label">03 · What CareHalo is designed to do</span>
+        <h2>A simple six-step core system.</h2>
+        <p class="lead">CareHalo is designed to accept the incoming call, answer through a natural AI voice agent, capture the key details, convert the conversation into a structured enquiry, notify the team and trigger a stronger escalation if the case is urgent.</p>
+        <div class="flow-grid">
+          <div class="flow-step"><div class="num">01</div><div class="ico">☎️</div><h4>Someone calls</h4><p>A family member or prospective customer phones the service.</p></div>
+          <div class="flow-step"><div class="num">02</div><div class="ico">🗣️</div><h4>AI answers</h4><p>ElevenLabs handles the initial conversation when humans are unavailable.</p></div>
+          <div class="flow-step"><div class="num">03</div><div class="ico">📝</div><h4>Details are captured</h4><p>Name, care need, timing, urgency, contact details and key notes are gathered.</p></div>
+          <div class="flow-step"><div class="num">04</div><div class="ico">📊</div><h4>Bubble structures it</h4><p>The conversation becomes a readable enquiry record rather than a raw call.</p></div>
+          <div class="flow-step"><div class="num">05</div><div class="ico">📧</div><h4>Team is notified</h4><p>Bubble pushes the right notification through SendGrid.</p></div>
+          <div class="flow-step"><div class="num">06</div><div class="ico">🚨</div><h4>Urgent cases escalate</h4><p>If the case is urgent, Bubble can trigger a Twilio phone escalation too.</p></div>
         </div>
       </div>
     </section>
 
-    <section id="stack">
+    <section id="stack" class="alt">
       <div class="wrap">
-        <span class="section-tag">06 · Technology stack</span>
-        <h2>The tools I ended up connecting.</h2>
-        <p class="lead">Each tool does one job. The product appears when those jobs are connected into one flow.</p>
-        <div class="stack">
-          <div class="stack-card"><div class="stack-logo">ElevenLabs</div><p>Conversational voice agent, voice selection, system prompt, knowledge base and agent runtime.</p></div>
-          <div class="stack-card"><div class="stack-logo">LLM</div><p>The reasoning brain selected inside the ElevenLabs agent configuration. I explored Gemini and Claude variants.</p></div>
-          <div class="stack-card"><div class="stack-logo">Bubble</div><p>Application, database, dashboard, backend workflows, API handling and orchestration.</p></div>
-          <div class="stack-card"><div class="stack-logo">SendGrid</div><p>Email notification layer so a new enquiry reaches the relevant inbox.</p></div>
-          <div class="stack-card"><div class="stack-logo">Twilio</div><p>Telephony layer and urgent phone escalation when email alone is not enough.</p></div>
+        <span class="section-label">04 · Technology stack</span>
+        <h2>How all the tools connect.</h2>
+        <p class="lead">The goal was not to show four disconnected logos. It was to build a clean hand-off between responsibilities: ElevenLabs handles the conversation, Bubble becomes the operational layer, and Bubble then orchestrates SendGrid and Twilio.</p>
+        <div class="architecture">
+          <div class="arch-top">
+            <div>
+              <h3 style="color:#fff;margin:0 0 8px">A premium stack is really a workflow.</h3>
+              <p>The usefulness of CareHalo appears when each tool hands work to the next one in a sensible way.</p>
+            </div>
+            <div>
+              <span class="tag">Voice AI</span>
+              <span class="tag">No-code orchestration</span>
+              <span class="tag">Email alerts</span>
+              <span class="tag">Urgent telephony</span>
+            </div>
+          </div>
+          <div class="arch-grid">
+            <div class="arch-card">
+              <h4>ElevenLabs</h4>
+              <p>Voice selection, system prompt, knowledge base and LLM reasoning come together to run the live conversation with the caller.</p>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-card">
+              <h4>Bubble</h4>
+              <p>Receives the outcome, structures the enquiry, creates the conversation summary, updates the dashboard, applies urgency logic and orchestrates next actions.</p>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-mini">
+              <div class="arch-card">
+                <h4>SendGrid</h4>
+                <p>Email alert when a new enquiry needs attention.</p>
+              </div>
+              <div class="arch-card">
+                <h4>Twilio</h4>
+                <p>Urgent phone escalation when email is not enough.</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <figure class="figure"><img src="assets/tools-connect.png" alt="CareHalo technology architecture showing ElevenLabs, Bubble, SendGrid and Twilio" data-lightbox /><figcaption>Architecture view: ElevenLabs handles the conversation; Bubble structures and orchestrates; SendGrid notifies; Twilio escalates.</figcaption></figure>
       </div>
     </section>
 
     <section id="build">
       <div class="wrap">
-        <div class="phase-head"><div class="phase-num">1</div><div><span class="section-tag" style="margin:0">Phase one</span><h2 style="margin:3px 0 0">Finding the right voice AI.</h2></div></div>
-        <p class="lead">The voice experience mattered first. If it sounded rushed, robotic or obviously scripted, the whole experience would lose trust.</p>
-        <div class="decision">
-          <div class="card"><div class="icon">V</div><h3>Started with Vapi</h3><p>Vapi was a useful way to learn the mechanics of voice agents and test conversational flows quickly.</p><p><strong>Why I kept exploring:</strong> in my own early tests, the tone still felt more robotic than I wanted and some voice options felt more US-oriented than the British support style I was aiming for.</p></div>
-          <div class="decision-arrow">→</div>
-          <div class="card"><div class="icon">Ⅱ</div><h3>Moved to ElevenLabs</h3><p>ElevenLabs gave me a strong environment to separately tune the voice, system prompt, knowledge base, LLM and agent behaviour.</p><p><strong>Decision:</strong> ElevenLabs became the conversational layer of CareHalo.</p></div>
-        </div>
-
-        <h3 style="margin-top:48px">Finding a British customer-care voice</h3>
-        <p class="lead" style="font-size:17px">Rather than browsing randomly, I narrowed the voice library using the type of language I wanted the caller to hear.</p>
-        <div class="chips"><span class="chip">British English</span><span class="chip">customer care</span><span class="chip">customer support</span><span class="chip">conversational</span><span class="chip">natural</span><span class="chip">calm</span><span class="chip">clear British voice</span></div>
-        <figure class="figure" style="max-width:820px"><img src="assets/elevenlabs-voice-results.png" alt="ElevenLabs British customer-support voice options" data-lightbox /><figcaption>Voice shortlist. The original search field has been cropped out; the terms above are the cleaned search terms used during exploration.</figcaption></figure>
-
-        <div class="two-col" style="margin-top:52px;align-items:start">
-          <div>
-            <h3>The system prompt gave the agent its behaviour.</h3>
-            <p>A system prompt acts like the agent's internal operating guide: role, tone, information to collect, boundaries and conversation behaviour.</p>
-            <p>The prompt was not written once and left alone. Testing exposed little things that made the conversation feel artificial, so I kept refining it.</p>
+        <span class="section-label">05 · Phase 1</span>
+        <h2>Finding the right voice AI.</h2>
+        <div class="phase">
+          <div class="card">
+            <h3>Why ElevenLabs became the conversational layer</h3>
+            <p>I initially explored Vapi, but I wanted something that felt more natural for a British customer-care style interaction. ElevenLabs gave me a better environment for testing voice quality, prompt behaviour, knowledge grounding and model selection in one place.</p>
+            <div style="margin-top:18px;">
+              <span class="chip">British English</span>
+              <span class="chip">Customer care</span>
+              <span class="chip">Customer support</span>
+              <span class="chip">Conversational</span>
+              <span class="chip">Natural</span>
+              <span class="chip">Calm</span>
+              <span class="chip">Clear British voice</span>
+            </div>
+            <p style="margin-top:18px;">Those search terms helped narrow the voice library towards something suitable for a UK support interaction rather than a generic AI voice.</p>
           </div>
-          <div class="prompt" aria-label="Redacted system prompt reconstruction">
-            <div class="comment"># CareHalo agent behaviour — redacted reconstruction</div>
-            <div><span class="key">ROLE:</span> calm after-hours care enquiry assistant</div>
-            <div><span class="key">TONE:</span> natural, patient, clear British customer-care style</div>
-            <div><span class="key">LISTEN:</span> allow the caller to finish before replying</div>
-            <div><span class="key">CAPTURE:</span> name, phone, email, care need, timeframe, urgency</div>
-            <div><span class="key">CONFIRM:</span> contact details where accuracy matters</div>
-            <div><span class="key">PACE:</span> use natural pauses; do not sound like a questionnaire</div>
-            <div><span class="warn">URGENT:</span> recognise escalation signals and flag clearly</div>
+          <figure class="media-card card">
+            <img src="assets/elevenlabs-voice-results.png" alt="Searching for a British customer care voice in ElevenLabs" />
+            <figcaption>Voice selection inside ElevenLabs using British customer-care style search criteria.</figcaption>
+          </figure>
+        </div>
+
+        <div class="phase" style="margin-top:20px;">
+          <div class="browser">
+            <div class="browser-top"><span></span><span></span><span></span></div>
+            <div class="browser-body">
+              <h3>The system prompt</h3>
+              <p>The LLM provides the intelligence. The system prompt provides the role, behaviour and boundaries. I kept refining the instructions based on how the calls actually sounded.</p>
+              <div class="prompt-box">
+                <p>Prompting focused on making CareHalo calm, clear, more human, less robotic and better at listening properly before it responded.</p>
+                <div class="prompt-points">
+                  <div class="mini-card">Capture names, phone numbers and email addresses accurately.</div>
+                  <div class="mini-card">Pause naturally so the conversation does not feel machine-like.</div>
+                  <div class="mini-card">Ask clarifying questions without turning the call into a rigid questionnaire.</div>
+                  <div class="mini-card">Recognise urgency and collect the details needed for proper follow-up.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="browser">
+            <div class="browser-top"><span></span><span></span><span></span></div>
+            <div class="browser-body">
+              <h3>The knowledge base</h3>
+              <p>To test the system safely, I created a fictional care home called <strong>Meadowbrook</strong>. That let me ground the agent on care-specific information without using real organisations or sensitive live data.</p>
+              <div class="kb-box">
+                <p>The knowledge base included service information, care types, respite support, CQC-style details, carehome.co.uk-style ratings context and other public-facing information a caller might reasonably ask about.</p>
+                <div class="kb-grid">
+                  <div class="mini-card">Residential care</div>
+                  <div class="mini-card">Dementia care</div>
+                  <div class="mini-card">Nursing support</div>
+                  <div class="mini-card">Respite stays</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <h3 style="margin-top:52px">The knowledge base gave it something factual to talk about.</h3>
-        <p class="lead" style="font-size:17px">I created a fictional test care service called <strong>Meadowbrook</strong> so the prototype could answer realistic questions without using any real organisation, resident or enquiry information.</p>
-        <div class="browser-frame">
-          <div class="browser-bar"><span class="browser-dot"></span><span class="browser-dot"></span><span class="browser-dot"></span></div>
-          <div class="browser-body">
-            <strong>Meadowbrook — test knowledge base</strong>
-            <div class="kb-grid"><div class="kb-item">Care types offered</div><div class="kb-item">Service and facilities information</div><div class="kb-item">Public-rating style information</div><div class="kb-item">Common caller questions</div><div class="kb-item">Respite / residential / nursing context</div><div class="kb-item">General enquiry guidance</div></div>
+        <div class="llm-grid">
+          <figure class="media-card card">
+            <img src="assets/llm-gemini.png" alt="Gemini 2.5 Flash cost estimate in ElevenLabs" />
+            <figcaption>Gemini 2.5 Flash — the cost-efficient model I used for this setup.</figcaption>
+          </figure>
+          <figure class="media-card card">
+            <img src="assets/llm-claude.png" alt="Claude Opus 4.7 cost estimate in ElevenLabs" />
+            <figcaption>Claude Opus 4.7 — much more expensive for the same voice context.</figcaption>
+          </figure>
+          <figure class="media-card card">
+            <img src="assets/llm-selector.png" alt="Available LLM models in ElevenLabs" />
+            <figcaption>The LLM is selected inside the ElevenLabs agent configuration — it acts as the reasoning brain.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt">
+      <div class="wrap">
+        <span class="section-label">06 · Phase 2</span>
+        <h2>Bubble: turning a conversation into a usable operational workflow.</h2>
+        <div class="phase">
+          <div class="card">
+            <h3>Why Bubble mattered</h3>
+            <p>Once the voice layer was working, the next question was obvious: what happens when the call ends? Bubble became the application layer, the database, the dashboard and the orchestration engine behind CareHalo.</p>
+            <p>I also experimented with <strong>Bubble’s AI agent</strong> while developing the dashboard. It helped accelerate the starting structure and some of the heavier lifting, but the product thinking still had to come from me — especially around what information should be shown prominently to a manager.</p>
+            <div class="capture-grid">
+              <div class="capture">Caller name</div>
+              <div class="capture">Phone number</div>
+              <div class="capture">Email address</div>
+              <div class="capture">Who needs care</div>
+              <div class="capture">Care type required</div>
+              <div class="capture">Current situation</div>
+              <div class="capture">Urgency</div>
+              <div class="capture">Conversation summary</div>
+              <div class="capture">Recommended next action</div>
+            </div>
+          </div>
+          <figure class="media-card card">
+            <img src="assets/bubble-workflow-safe.png" alt="Bubble backend workflow used to receive and structure enquiry data" />
+            <figcaption>Bubble receives the outcome of the conversation and orchestrates how the enquiry is stored and routed.</figcaption>
+          </figure>
+        </div>
+
+        <div class="bubble-screens">
+          <figure class="media-card card">
+            <img src="assets/bubble-dashboard.png" alt="CareHalo dashboard view in Bubble" />
+            <figcaption>The manager dashboard in Bubble — turning multiple calls into a scannable operational view.</figcaption>
+          </figure>
+          <figure class="media-card card">
+            <img src="assets/structured-enquiry.png" alt="Structured enquiry and summary view in CareHalo" />
+            <figcaption>A structured enquiry record with readable fields, priority cues and a manager-friendly layout.</figcaption>
+          </figure>
+        </div>
+
+        <div class="summary-strip">
+          <div class="summary-box">
+            <h4>How the conversation summary works</h4>
+            <p>Bubble does not simply store raw output. It becomes the place where the call outcome is shaped into a human-readable summary — something a manager can understand quickly without listening back to the full recording.</p>
+          </div>
+          <div class="summary-box">
+            <h4>Why it matters</h4>
+            <p>That summary is one of the most valuable parts of the product. It turns a phone conversation into something actionable: who called, what they need, how urgent it is and what should happen next.</p>
           </div>
         </div>
-
-        <h3 style="margin-top:52px">The LLM is the reasoning brain inside the voice agent.</h3>
-        <p class="lead" style="font-size:17px">Inside ElevenLabs I could choose the primary LLM. That matters because real-time voice needs a balance of reasoning quality, latency and cost. The screenshots below are from my own test configuration, including a relatively long prompt and knowledge base.</p>
-        <div class="image-grid">
-          <figure class="figure"><img src="assets/llm-gemini.png" alt="ElevenLabs LLM cost calculator showing Gemini 2.5 Flash" data-lightbox /><figcaption>Gemini 2.5 Flash — my test configuration showed an estimated ~$0.0097/min LLM cost.</figcaption></figure>
-          <figure class="figure"><img src="assets/llm-claude.png" alt="ElevenLabs LLM cost calculator showing Claude Opus" data-lightbox /><figcaption>Claude Opus 4.7 — same setup, materially higher estimated LLM cost.</figcaption></figure>
-          <figure class="figure"><img src="assets/llm-selector.png" alt="ElevenLabs primary LLM model selector" data-lightbox /><figcaption>Model selector showing multiple hosted and third-party LLM options.</figcaption></figure>
-        </div>
-        <p class="fine">Important: the per-minute LLM figure shown above is a calculator estimate for this test configuration, not a universal Gemini price. Prompt length, knowledge-base context, model choice and agent behaviour can change the estimate.</p>
-
-        <h3 style="margin-top:52px">The real work was the test loop.</h3>
-        <div class="loop"><div><b>1</b>Publish</div><div><b>2</b>Call</div><div><b>3</b>Listen</div><div><b>4</b>Adjust</div><div><b>5</b>Repeat</div></div>
       </div>
     </section>
 
     <section>
       <div class="wrap">
-        <div class="phase-head"><div class="phase-num">2</div><div><span class="section-tag" style="margin:0">Phase two</span><h2 style="margin:3px 0 0">Bubble turned the conversation into a product.</h2></div></div>
-        <p class="lead">An AI call is interesting. A useful business workflow begins when the call ends and the information becomes something a manager can actually use.</p>
-        <div class="two-col">
-          <div class="card"><div class="icon">◉</div><h3>Bubble became the operational layer</h3><ul class="list"><li>Database</li><li>Backend workflows</li><li>Manager dashboard</li><li>API/webhook handling</li><li>Urgency logic</li><li>Downstream automation</li></ul></div>
-          <div class="card"><div class="icon">✦</div><h3>I also used Bubble's AI Agent</h3><p>I experimented with Bubble's AI-assisted building tools to accelerate the starting structure of the dashboard and reduce some of the repetitive UI work.</p><p><strong>The useful lesson:</strong> AI can do a surprising amount of heavy lifting, but product judgement still decides what information matters and how people should act on it.</p></div>
-        </div>
-        <figure class="figure"><img src="assets/bubble-dashboard.png" alt="Live CareHalo Bubble manager dashboard" data-lightbox /><figcaption>The live Bubble dashboard used in the working CareHalo prototype.</figcaption></figure>
-
-        <h3 style="margin-top:52px">From conversation to structured enquiry</h3>
-        <p class="lead" style="font-size:17px">The goal was not to make a manager listen back to every recording. Bubble receives the useful post-call output and presents the key facts as a quick operational snapshot.</p>
-        <div class="capture-grid"><div class="capture">Caller + person requiring care</div><div class="capture">Care type + current setting</div><div class="capture">Timeframe + discharge context</div><div class="capture">Key needs + contact details</div><div class="capture">Urgency + call category</div><div class="capture">AI summary + recommended action</div></div>
-        <figure class="figure" style="max-width:880px"><img src="assets/structured-enquiry.png" alt="CareHalo structured enquiry view with conversation summary and recommended next action" data-lightbox /><figcaption>A test enquiry using fictional data. The manager can understand the situation without replaying the entire call.</figcaption></figure>
-
-        <h3 style="margin-top:52px">Connecting ElevenLabs to Bubble</h3>
-        <p class="lead" style="font-size:17px">When the voice interaction completes, relevant post-call information is sent into a Bubble backend workflow. Bubble creates the CareEnquiry, applies logic and then decides which integration should run next.</p>
-        <div class="prompt">
-          <div><span class="key">ELEVENLABS</span> — conversation completes</div>
-          <div>↓</div>
-          <div><span class="key">POST-CALL OUTPUT</span> — relevant structured fields / transcript output</div>
-          <div>↓</div>
-          <div><span class="key">BUBBLE BACKEND</span> — create enquiry → structure → summarise → urgency check</div>
-          <div>↓</div>
-          <div><span class="key">ROUTE</span> — dashboard + SendGrid + optional Twilio escalation</div>
-        </div>
-        <figure class="figure"><img src="assets/bubble-workflow-safe.png" alt="Sanitised Bubble backend workflow showing CareHalo enquiry, SendGrid and Twilio steps" data-lightbox /><figcaption>Sanitised Bubble backend workflow. The inspector area containing implementation values has been removed from the public screenshot.</figcaption></figure>
-      </div>
-    </section>
-
-    <section>
-      <div class="wrap">
-        <div class="phase-head"><div class="phase-num">3</div><div><span class="section-tag" style="margin:0">Phase three</span><h2 style="margin:3px 0 0">SendGrid and Twilio turn information into follow-up.</h2></div></div>
-        <p class="lead">Bubble is the decision-maker. The downstream tools have intentionally narrow jobs.</p>
-        <div class="branch">
-          <div class="card bubble"><div class="icon">B</div><h4>Bubble orchestration</h4><p>Create record, update dashboard and evaluate urgency.</p></div>
-          <div class="route">→</div>
-          <div class="card mail"><div class="icon">✉</div><h4>SendGrid</h4><p>Send the manager a minimal notification that a new enquiry needs review.</p></div>
-          <div class="card phone"><div class="icon">☎</div><h4>Twilio</h4><p>If the case is urgent, trigger a stronger phone escalation rather than relying on email alone.</p></div>
-        </div>
-        <div class="privacy-note"><strong>Production design choice:</strong> I would keep detailed care information inside the secure dashboard and make the email primarily a notification, reducing the amount of sensitive information duplicated into inboxes.</div>
-      </div>
-    </section>
-
-    <section>
-      <div class="wrap">
-        <span class="section-tag">A simple scenario</span>
-        <h2>What happens on a Saturday evening?</h2>
+        <span class="section-label">07 · Notifications and escalation</span>
+        <h2>SendGrid and Twilio complete the loop.</h2>
+        <p class="lead">Bubble becomes the decision-maker after the enquiry is structured. A regular enquiry can trigger an email. A more urgent one can trigger both email and a telephone escalation.</p>
         <div class="scenario">
-          <h3>One caller. Five hand-offs. One human decision at the end.</h3>
-          <div class="scenario-steps">
-            <div class="scenario-step"><div class="s-icon">👤☎</div><strong>1 · Family member calls</strong><p>The normal team is unavailable.</p></div>
-            <div class="scenario-step"><div class="s-icon">🎧✦</div><strong>2 · AI voice agent answers</strong><p>Listens naturally and gathers the key information.</p></div>
-            <div class="scenario-step"><div class="s-icon">▤</div><strong>3 · Bubble structures it</strong><p>Creates the enquiry, summary and urgency status.</p></div>
-            <div class="scenario-step"><div class="s-icon">✉</div><strong>4 · SendGrid notifies</strong><p>The team knows a new enquiry needs attention.</p></div>
-            <div class="scenario-step"><div class="s-icon">☎!</div><strong>5 · Twilio escalates if urgent</strong><p>A higher-priority case can trigger a manager phone call.</p></div>
+          <h3>A simple CareHalo scenario</h3>
+          <p>Imagine it is Saturday evening. A family member calls looking for respite care. The team is unavailable. CareHalo answers, asks the right questions, captures the details and routes the case appropriately.</p>
+          <div class="scenario-grid">
+            <div class="scenario-step"><div class="ico">☎️</div><strong>Caller phones</strong><p>A family member calls outside normal working hours.</p></div>
+            <div class="scenario-step"><div class="ico">🗣️</div><strong>AI handles the call</strong><p>ElevenLabs runs the conversation and gathers the important information.</p></div>
+            <div class="scenario-step"><div class="ico">📊</div><strong>Bubble structures it</strong><p>The enquiry is saved, summarised and prioritised inside the dashboard.</p></div>
+            <div class="scenario-step"><div class="ico">📧</div><strong>SendGrid alerts</strong><p>The team receives a notification that a new enquiry needs attention.</p></div>
+            <div class="scenario-step"><div class="ico">📞</div><strong>Twilio escalates if needed</strong><p>If the case is urgent, Bubble triggers a stronger phone escalation too.</p></div>
           </div>
-          <div class="scenario-footer">AI supports the team when humans are unavailable — humans still review, decide and act.</div>
         </div>
       </div>
     </section>
 
-    <section id="privacy">
+    <section id="privacy" class="alt">
       <div class="wrap">
-        <span class="section-tag">07 · Before cost</span>
-        <h2>What happens to the data?</h2>
-        <p class="lead">A real caller could share names, contact details and health-related care needs. In a UK production deployment, privacy cannot be an afterthought. Health information can be special-category personal data under UK GDPR.</p>
-        <div class="privacy-flow">
-          <div class="privacy-card"><div class="tool">ElevenLabs</div><p>Processes the conversation. Retention should be deliberately configured rather than simply leaving a long default because storage is available.</p><small>Design aim: minimise audio/transcript retention.</small></div>
-          <div class="privacy-card"><div class="tool">Bubble</div><p>Stores the structured business record. Access controls, privacy rules and a defined deletion/anonymisation policy matter.</p><small>Design aim: store the useful record, not unnecessary duplicates.</small></div>
-          <div class="privacy-card"><div class="tool">SendGrid</div><p>Only needs enough information to deliver the notification. Detailed sensitive information can remain behind the authenticated dashboard.</p><small>Design aim: minimise email content.</small></div>
-          <div class="privacy-card"><div class="tool">Twilio</div><p>Used for telephony/escalation. There is no reason to record the manager escalation call unless a genuine business requirement exists.</p><small>Design aim: no unnecessary recording.</small></div>
+        <span class="section-label">08 · Before cost</span>
+        <h2>What about UK GDPR and the data?</h2>
+        <p class="lead">Once the prototype was working, the next question became essential: if CareHalo is listening to real people discussing care needs, where does all that information actually go?</p>
+        <div class="privacy-grid">
+          <div class="privacy-card">
+            <div class="tool">ElevenLabs</div>
+            <p>Processes the live conversation and can retain transcripts or audio based on configuration. In a real deployment, retention should be intentionally set rather than left on long defaults.</p>
+            <small>Voice layer + LLM reasoning</small>
+          </div>
+          <div class="privacy-card">
+            <div class="tool">Bubble</div>
+            <p>Stores the structured enquiry record. Access, privacy rules, retention and deletion workflows should be actively designed rather than assumed.</p>
+            <small>Application layer + database</small>
+          </div>
+          <div class="privacy-card">
+            <div class="tool">SendGrid</div>
+            <p>Should only receive the minimum information needed to notify the team. Sensitive care details are better kept inside the authenticated dashboard.</p>
+            <small>Email notification layer</small>
+          </div>
+          <div class="privacy-card">
+            <div class="tool">Twilio</div>
+            <p>Handles telephony for escalation. In a real implementation, call recording should only be enabled where there is a genuine reason to record.</p>
+            <small>Urgent escalation layer</small>
+          </div>
         </div>
-        <div class="two-col">
-          <div class="card"><h3>My UK-GDPR design principles</h3><ul class="list"><li>Tell callers when they are interacting with AI</li><li>Collect only what is genuinely required</li><li>Keep sensitive detail inside authenticated systems</li><li>Set explicit retention periods</li><li>Use Bubble privacy rules and user permissions</li><li>Review processors, DPAs and international transfers</li></ul></div>
-          <div class="card"><h3>Before a real rollout</h3><p>A production organisation should complete the appropriate privacy, information-governance and legal review. Because this concept could involve AI and health-related information, a Data Protection Impact Assessment may be required depending on the exact deployment and risk.</p><div class="privacy-note" style="margin-top:18px"><strong>This prototype is different:</strong> CareHalo was built using fictional/test information. It is a learning and portfolio build, not a live care-data deployment.</div></div>
+        <div class="privacy-note">
+          <strong>The simple rule:</strong> collect what is needed, store what is needed, keep it only for as long as it is needed, and tell the caller clearly that their information is being processed. For a real UK rollout, organisations would also need appropriate lawful basis, handling for special-category data and a proper DPIA where required.
         </div>
       </div>
     </section>
 
     <section id="cost">
       <div class="wrap">
-        <span class="section-tag">08 · Cost strategy</span>
-        <h2>What would a small out-of-hours pilot actually cost?</h2>
-        <p class="lead">The point is not to make AI answer every call just because it can. A more sensible model is to let human teams cover normal hours and use AI where the coverage gap exists.</p>
+        <span class="section-label">09 · Cost strategy</span>
+        <h2>Use AI where the gap exists — not simply everywhere.</h2>
+        <p class="lead">My view after building this is that the smartest model is often: let humans handle normal working hours, and let AI cover evenings, weekends, overflow or periods where no one is available to answer quickly.</p>
         <div class="metric-row">
-          <div class="metric"><small>Calls per week</small><b>20</b><span>out-of-hours example</span></div>
-          <div class="metric"><small>Average call</small><b>4 min</b><span>working assumption</span></div>
-          <div class="metric"><small>Calls per month</small><b>≈87</b><span>using ~4.33 weeks</span></div>
-          <div class="metric"><small>AI minutes</small><b>≈347</b><span>monthly conversation time</span></div>
+          <div class="metric"><small>Example call volume</small><b>20 / week</b><span>Out-of-hours calls used for the sample model</span></div>
+          <div class="metric"><small>Average duration</small><b>4 mins</b><span>Used for LLM and telephony calculations</span></div>
+          <div class="metric"><small>Estimated monthly calls</small><b>~87</b><span>Using 4.33 weeks in a month</span></div>
+          <div class="metric"><small>Estimated monthly minutes</small><b>~347</b><span>Voice minutes across the month</span></div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Cost item</th><th>Assumption</th><th>Approx. monthly</th></tr></thead>
+            <thead>
+              <tr><th>Tool / item</th><th>Assumption</th><th>Approx. monthly cost</th></tr>
+            </thead>
             <tbody>
-              <tr><td><strong>ElevenLabs Creator</strong></td><td>275 call minutes included</td><td>$22.00</td></tr>
-              <tr><td>Additional ElevenAgents minutes</td><td>~72 extra mins × $0.08</td><td>~$5.76</td></tr>
-              <tr><td>LLM estimate</td><td>347 mins × ~$0.0097 from my test calculator</td><td>~$3.37</td></tr>
-              <tr><td><strong>Bubble Web Starter</strong></td><td>Monthly web-only Starter assumption</td><td>$32.00</td></tr>
-              <tr><td><strong>SendGrid Essentials</strong></td><td>Paid-plan assumption after trial</td><td>$19.95</td></tr>
-              <tr><td><strong>Twilio UK voice</strong></td><td>Local number + ~347 incoming mins + small urgent outbound allowance</td><td>~$7.38</td></tr>
-              <tr class="total-row"><td colspan="2">Illustrative full monthly stack</td><td>~$90.46</td></tr>
+              <tr><td>ElevenLabs Creator</td><td>Base subscription</td><td>$22.00</td></tr>
+              <tr><td>Additional ElevenLabs minutes</td><td>~72 mins beyond included allowance</td><td>$5.73</td></tr>
+              <tr><td>Gemini 2.5 Flash LLM</td><td>~347 mins × $0.0097/min</td><td>$3.36</td></tr>
+              <tr><td>Bubble Web Starter</td><td>App, workflows, dashboard and orchestration</td><td>$32.00</td></tr>
+              <tr><td>SendGrid Essentials</td><td>Email notifications</td><td>$19.95</td></tr>
+              <tr><td>Twilio</td><td>UK number + inbound/outbound usage estimate</td><td>$7.38</td></tr>
+              <tr class="total-row"><td>Total</td><td>Illustrative working estimate</td><td>$90.42</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="cost-callout">
-          <div class="cost-big"><small>Approximate all-in cost</small><b>~$1.04</b><span>per handled call at ~87 calls/month</span></div>
-          <div class="cost-big alt"><small>During a $0 SendGrid trial assumption</small><b>~$0.81</b><span>per handled call</span></div>
+        <div class="cost-cards">
+          <div class="cost-card dark">
+            <small>All-in monthly estimate</small>
+            <b>$90.42</b>
+            <span>Approximate full stack cost for the 20-calls-per-week model.</span>
+          </div>
+          <div class="cost-card teal">
+            <small>Approximate cost per handled call</small>
+            <b>$1.04</b>
+            <span>Based on ~87 calls/month in the example model.</span>
+          </div>
         </div>
-        <p class="fine">Illustrative planning model only, before taxes and any other usage. Pricing changes, model configuration changes, telephony routing and Bubble workload can all change the real number. Always check the providers' current pricing before deployment.</p>
-
-        <h3 style="margin-top:56px">Cost per call is only half the story.</h3>
-        <p class="lead" style="font-size:17px">The commercial question is not simply “does the software cost $90?”. The better question is whether it captures calls that would otherwise be lost and helps the team respond faster.</p>
-        <div class="four-col">
-          <div class="soft-card"><h4>Coverage</h4><p>How many out-of-hours calls were actually answered?</p></div>
-          <div class="soft-card"><h4>Quality</h4><p>How many enquiries were captured with enough information to act?</p></div>
-          <div class="soft-card"><h4>Speed</h4><p>Did urgent enquiries reach the right person sooner?</p></div>
-          <div class="soft-card"><h4>Outcome</h4><p>Did better handling lead to more meaningful follow-up or placements over time?</p></div>
-        </div>
-        <div class="quote">AI can do its part perfectly and the workflow can still fail if nobody follows up.</div>
-        <p class="lead" style="font-size:18px">That is why I would test this for 8–12 weeks in one controlled use case, measure the complete journey, and then decide whether it is genuinely adding value.</p>
+        <p class="lead" style="margin-top:24px;max-width:1000px;">The important point is not just software cost. The real question is whether the system answers calls that would otherwise be missed, improves response speed, gives teams better visibility and preserves opportunities that might otherwise be lost.</p>
       </div>
     </section>
 
-    <section>
+    <section class="alt">
       <div class="wrap">
-        <span class="section-tag">09 · What I learned</span>
-        <h2>The stack is not the secret. The decisions between the tools are.</h2>
+        <span class="section-label">10 · What I learned</span>
+        <h2>The project was really about product judgement.</h2>
         <div class="lessons">
-          <div class="lesson"><h4>Voice is not just text-to-speech</h4><p>Pacing, listening behaviour, interruption handling and tone change the entire experience.</p></div>
-          <div class="lesson"><h4>Prompt engineering is iterative</h4><p>Real calls exposed issues that were impossible to see by only reading the prompt.</p></div>
-          <div class="lesson"><h4>Knowledge grounding matters</h4><p>The agent becomes useful when it can answer factual questions rather than only hold a generic conversation.</p></div>
-          <div class="lesson"><h4>The most expensive LLM is not automatically the best choice</h4><p>For real-time voice, latency and economics matter alongside raw model capability.</p></div>
-          <div class="lesson"><h4>The call is only the beginning</h4><p>A great conversation followed by a poor operational workflow is still a poor product.</p></div>
-          <div class="lesson"><h4>Bubble made the idea tangible quickly</h4><p>Database, interface, workflows and integrations could be explored without building a traditional full stack.</p></div>
-          <div class="lesson"><h4>AI builders accelerate, but product judgement remains</h4><p>Bubble AI helped with the heavy lifting; deciding what the manager actually needs still required human thinking.</p></div>
-          <div class="lesson"><h4>Integration is where the product appears</h4><p>ElevenLabs, Bubble, SendGrid and Twilio are individual tools. CareHalo appears when they hand work to each other.</p></div>
-          <div class="lesson"><h4>Privacy is part of architecture</h4><p>Retention, access, disclosure and data minimisation are product-design questions, not final legal decoration.</p></div>
-          <div class="lesson"><h4>AI is strongest here as coverage</h4><p>Use it where humans cannot always be present, while keeping human judgement at the centre.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="wrap">
-        <span class="section-tag">10 · What I would build next</span>
-        <h2>CareHalo is a working experiment, not the end of the idea.</h2>
-        <div class="three-col">
-          <div class="card"><h4>Better intelligence</h4><p>More structured urgency scoring, prompt versioning, conversation analytics and availability awareness.</p></div>
-          <div class="card"><h4>Better operations</h4><p>Outcome tracking, multi-location routing, human hand-off and clearer follow-up accountability.</p></div>
-          <div class="card"><h4>Better governance</h4><p>Short-retention defaults, richer permission controls and stronger production privacy processes.</p></div>
+          <div class="lesson"><h4>Voice is more than text-to-speech</h4><p>Pacing, interruption behaviour, listening and tone matter as much as voice quality itself.</p></div>
+          <div class="lesson"><h4>Prompting is iterative</h4><p>The first prompt is never the final one. Real testing reveals what actually sounds human.</p></div>
+          <div class="lesson"><h4>Knowledge grounding matters</h4><p>An agent becomes much more useful when it has safe, relevant information it can refer to.</p></div>
+          <div class="lesson"><h4>Bubble made the idea tangible quickly</h4><p>It let me move from voice experiment to a usable product workflow without a traditional stack.</p></div>
+          <div class="lesson"><h4>Conversation summary is the hidden value</h4><p>Turning speech into a quick, readable manager summary makes the call much easier to act on.</p></div>
+          <div class="lesson"><h4>AI works best here as coverage, not replacement</h4><p>The strongest use case is filling the gap when humans are unavailable — not pushing humans out of the process.</p></div>
         </div>
       </div>
     </section>
@@ -500,44 +636,58 @@
     <section>
       <div class="wrap">
         <div class="cta">
-          <span class="section-tag" style="color:#72e2df">CareHalo</span>
-          <h2>Every call understood. Every need connected.</h2>
-          <p>A phone conversation becomes a structured enquiry — captured, understood, prioritised and ready for human action.</p>
+          <span class="section-label" style="color:#8be5ea">Final outcome</span>
+          <h2>CareHalo turns a phone conversation into an actionable enquiry — captured, understood, prioritised and ready for human action.</h2>
+          <p>This is not presented as a production care system. It is a working prototype and a build story — designed to explore the stack, the workflow, the economics and the role AI can play when people cannot always be there.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" style="background:white;color:#071b34" href="https://canva.link/jgeissh9xfzk5v6" target="_blank" rel="noreferrer">▶ Watch the full demo</a>
-            <a class="btn btn-secondary" href="https://carehalo-ai.bubbleapps.io" target="_blank" rel="noreferrer">Open the live prototype ↗</a>
+            <a class="btn btn-primary" href="https://canva.link/jgeissh9xfzk5v6" target="_blank" rel="noreferrer">Watch full demo ↗</a>
+            <a class="btn btn-secondary" href="https://carehalo-ai.bubbleapps.io" target="_blank" rel="noreferrer">Open live prototype ↗</a>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section style="padding-top:40px">
-      <div class="wrap sources">
-        <h3>Reference links</h3>
-        <p>Pricing and privacy details can change. These are the official sources I would re-check before any real deployment:</p>
-        <p><a href="https://elevenlabs.io/pricing/agents" target="_blank" rel="noreferrer">ElevenLabs — ElevenAgents pricing</a> · <a href="https://elevenlabs.io/docs/eleven-agents/customization/privacy/retention" target="_blank" rel="noreferrer">ElevenLabs — retention</a> · <a href="https://bubble.io/pricing" target="_blank" rel="noreferrer">Bubble — pricing</a> · <a href="https://bubble.io/dpa" target="_blank" rel="noreferrer">Bubble — DPA</a> · <a href="https://www.twilio.com/en-us/products/email-api/pricing" target="_blank" rel="noreferrer">SendGrid — pricing</a> · <a href="https://www.twilio.com/en-us/voice/pricing/gb" target="_blank" rel="noreferrer">Twilio — UK voice pricing</a> · <a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/" target="_blank" rel="noreferrer">ICO — UK GDPR guidance</a>.</p>
       </div>
     </section>
   </main>
 
   <footer>
     <div class="wrap footer-grid">
-      <div class="disclaimer"><strong>Portfolio disclaimer:</strong> CareHalo is a personal prototype and learning project built using fictional/test information. It is not presented as a production care system or as a substitute for professional care, clinical judgement, legal advice or formal data-protection review.</div>
-      <div>Built as a personal AI / automation project.</div>
+      <div>© CareHalo case study</div>
+      <div>Built with ElevenLabs, Bubble, SendGrid and Twilio</div>
+      <div>Fictional/test data only · UK use-case exploration</div>
     </div>
   </footer>
 
-  <div class="lightbox" id="lightbox" aria-hidden="true"><button aria-label="Close image">×</button><img alt="Expanded project screenshot" /></div>
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button type="button" aria-label="Close image">×</button>
+    <img alt="Expanded image" />
+  </div>
+
   <script>
-    const box=document.getElementById('lightbox');
-    const boxImg=box.querySelector('img');
-    document.querySelectorAll('[data-lightbox]').forEach(img=>img.addEventListener('click',()=>{boxImg.src=img.src;boxImg.alt=img.alt;box.classList.add('open');box.setAttribute('aria-hidden','false')}));
-    const close=()=>{box.classList.remove('open');box.setAttribute('aria-hidden','true');boxImg.src=''};
-    box.querySelector('button').addEventListener('click',close);box.addEventListener('click',e=>{if(e.target===box)close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
-    const sections=[...document.querySelectorAll('main section[id]')];
-    const links=[...document.querySelectorAll('.nav-links a[href^="#"]')];
-    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id))}})},{rootMargin:'-35% 0px -55% 0px'});
-    sections.forEach(s=>io.observe(s));
+    const sections=[...document.querySelectorAll('main section[id], .hero')];
+    const navLinks=[...document.querySelectorAll('.nav-links a[href^="#"]')];
+    const linkMap=Object.fromEntries(navLinks.map(a=>[a.getAttribute('href').slice(1),a]));
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          navLinks.forEach(l=>l.classList.remove('active'));
+          const id=entry.target.id;
+          if(linkMap[id]) linkMap[id].classList.add('active');
+        }
+      })
+    },{rootMargin:'-30% 0px -55% 0px',threshold:.1});
+    sections.forEach(sec=>observer.observe(sec));
+
+    const lightbox=document.getElementById('lightbox');
+    const lbImg=lightbox.querySelector('img');
+    document.querySelectorAll('img').forEach(img=>{
+      if(img.closest('.brand')) return;
+      img.addEventListener('click',()=>{
+        if(img.closest('.hero')||img.closest('.media-card')||img.closest('.dashboard-card')){
+          lbImg.src=img.src; lbImg.alt=img.alt; lightbox.classList.add('open'); lightbox.setAttribute('aria-hidden','false');
+        }
+      });
+    });
+    lightbox.addEventListener('click',e=>{ if(e.target===lightbox||e.target.tagName==='BUTTON'){ lightbox.classList.remove('open'); lightbox.setAttribute('aria-hidden','true'); }});
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape') lightbox.classList.remove('open'); });
   </script>
 </body>
 </html>
