@@ -1,5 +1,5 @@
-# CareHalo
+# CareHalo GitHub Pages
 
-A visual build journal for CareHalo — an AI-powered care enquiry and escalation prototype built with ElevenLabs, Bubble, SendGrid and Twilio.
+Upload `index.html` and the `assets` folder to the root of the `CareHalo` repository.
 
-The public case study uses fictional/test data only.
+The page uses Montserrat (weights 200, 400, 500 and 700) through Google Fonts and preserves the supplied screenshots at their original aspect ratios.
